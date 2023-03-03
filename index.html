@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css">
+    <title>Responsive portfolio Filter Gallery using HTML CSS & Javascript</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+        /* font-family: 'Poppins', sans-serif; */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: rgb(226, 226, 226);
+        }
+
+        .gallery-box {
+            padding: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 40px auto;
+        }
+        .gallery-box h1 {
+            font-size: 40px;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            font-weight: normal;
+            padding: 15px;
+            color: #333;
+            text-align: center;
+            text-transform: capitalize;
+            margin-bottom: 30px;
+        }
+
+        .gallery-box ul {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .gallery-box ul li {
+            list-style-type: none;
+            background-color: #eee;
+            padding: 12px 30px;
+            margin: 10px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .gallery-box ul li.active {
+            background-color: #03a9f4;
+            color: #fff;
+        }
+
+        .product {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .product .itemBox {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 5px;
+            display: block;
+            border: 10px solid rgb(251, 251, 251);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, .1);
+            border-radius: 3px;
+            overflow: hidden; 
+            cursor: pointer;
+        }
+
+        .product .itemBox.hide {
+            display: none;
+        }
+
+        .product .itemBox img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: .7s linear;
+        }
+        .product .itemBox:hover img{
+            transform:scale(1.1);
+        }
+        .product .itemBox:hover video{
+            transform:scale(1.1);
+        }
+
+        /* style for videos  */
+        .product .itemBox video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: .7s linear;
+        }
+
+        /* style for videos   ENDs here*/
+        /* popup img */
+
+        .popup-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(37, 28, 28, 0.9);
+            height: 100%;
+            width: 100%;
+            z-index: 100;
+            display: none;
+        }
+
+        .popup-image .close-img {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            font-size: 40px;
+            font-weight: bolder;
+            color: #fff;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .popup-image img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 5px solid #fff;
+            border-radius: 5px;
+            width: 650px;
+            object-fit: cover;
+        }
+
+        @media (max-width:768px) {
+            .popup-image img {
+                width: 70%;
+            }
+
+            .product .itemBox {
+            width: 300px;
+        }
+
+        .gallery-box h1 {
+            font-size: 30px;
+        }
+        }
+
+        .text-image {
+            position: absolute;
+            width: 40px;
+            background-color: rgba(16, 17, 17, 0.498);
+            top: 2;
+            top: 0;
+            right: 0;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .text-image span {
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .text-image span .fas {
+            padding-top: 20px;
+            color: #fff;
+
+        }
+
+        /* styles for video popup */
+
+        /* popup-video */
+        .popup-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            background-color: rgba(0, 0, 0, .8);
+            height: 100%;
+            width: 100%;
+            display: none;
+        }
+
+        .popup-video video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 750px;
+            border-radius: 5px;
+            border: 3px solid #fff;
+            object-fit: cover;
+        }
+
+        .popup-video .close-video {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            font-size: 40px;
+            color: #fff;
+            font-weight: bolder;
+            z-index: 100;
+            cursor: pointer;
+        }
+
+        @media (max-width:768px) {
+            .popup-video video {
+                width: 70%;
+            }
+/* 
+            .popup-video .close-video {
+                font-size: 30px;
+                top: 20px;
+            right: 20px;
+            } */
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="gallery-box">
+        <h1>Gallery</h1>
+        <ul>
+            <li class="list active" data-filter="all">All</li>
+            <li class="list" data-filter="photo">Photo</li>
+            <li class="list" data-filter="video">Video</li>
+        </ul>
+
+
+        <!-- Product start here -->
+        <div class="product">
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="photo"><img src="https://i.pinimg.com/originals/d6/64/a4/d664a4e1a33c09e90e73ce32d49c6ac0.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="photo"><img src="https://artfiles.alphacoders.com/566/56607.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="photo"><img src="https://i.pinimg.com/originals/b7/0d/1d/b70d1d31c5ce1fefa7a3bb1cfc9109f2.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="photo"><img src="https://www.reference.com/content/419749/ed9e49f85d8f405be924a7474dd4af54.jpg" alt="">
+
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+
+            <div class="itemBox" data-item="photo"><img src="https://i1.wp.com/i.pinimg.com/originals/bf/25/c0/bf25c037f6cadcc7962f2069aa3dc3c9.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="photo"><img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBwgu1A5zgPSvfE83nurkuzNEoXs9DMNr8Ww&usqp=CAU"
+                    alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="photo"><img src="images/mobile2.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="photo"><img src="images/camera2.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="photo"><img src="images/watch2.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="photo"><img src="images/shoe2.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+
+            <div class="itemBox" data-item="photo"><img src="images/headphone2.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="photo"><img src="images/mobile3.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="photo"><img src="images/camera3.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+
+            <div class="itemBox" data-item="photo"><img src="images/watch3.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="photo"><img src="images/shoe3.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+
+            <div class="itemBox" data-item="photo"><img src="images/headphone2.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+
+            <div class="itemBox" data-item="video"><video src="images/Rose - 3654.mp4" controls></video>
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="video"><video src="images/Waterfall - 37088.mp4" controls></video>
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="video"><video src="images/Rose - 3654.mp4" controls></video>
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="video"><video src="images/Waterfall - 37088.mp4" controls></video>
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="mobile"><img src="images/mobile4.jpg" alt="">
+
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="camera"><img src="images/camera3.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="watch"><img src="images/watch4.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="shoes"><img src="images/shoe4.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="headphones"><img src="images/headphone4.jpg" alt="">
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+            <!-- ***** itemBox ***** -->
+            <div class="itemBox" data-item="mobile"><img src="images/mobile5.jpg" alt="">
+
+                <!-- image box icon -->
+                <div class="text-image">
+                    <span>
+                        <!-- delete icon -->
+                        <i class="far fa-trash-alt remove-image"></i>
+                    </span>
+                </div>
+                <!-- image box icon ENDS HERE -->
+            </div>
+            <!-- ***** End itemBox *****-->
+
+
+
+        </div>
+        <!-- Product ENDS here -->
+    </section>
+
+
+    <!-- Popup for image -->
+    <div class="popup-image">
+        <span class="close-img">&times;</span>
+        <img src="https://www.reference.com/content/419749/ed9e49f85d8f405be924a7474dd4af54.jpg" alt="">
+    </div>
+    <!-- Popup for image ENDS HERE-->
+
+
+    <!-- Popup for videos -->
+    <div class="popup-video">
+        <span class="close-video">&times;</span>
+        <video src="Rose - 3654.mp4" muted autoplay controls></video>
+    </div>
+    <!-- Popup for video ENDS HERE-->
+
+
+
+    <!-- script  starts here-->
+    <!-- script for top menu -->
+    <script>
+        let list = document.querySelectorAll('.list');
+        let itemBox = document.querySelectorAll('.itemBox');
+
+        for (let i = 0; i < list.length; i++) {
+            list[i].addEventListener('click', function () {
+                for (let j = 0; j < list.length; j++) {
+                    list[j].classList.remove('active');
+                }
+                this.classList.add('active');
+
+
+                let dataFilter = this.getAttribute('data-filter');
+
+                for (let k = 0; k < itemBox.length; k++) {
+                    itemBox[k].classList.remove('active');
+                    itemBox[k].classList.add('hide');
+
+                    if (itemBox[k].getAttribute('data-item') == dataFilter ||
+                        dataFilter == 'all') {
+                        itemBox[k].classList.remove('hide');
+                        itemBox[k].classList.add('active');
+                    }
+
+                }
+            })
+        }
+    </script>
+    <!-- script for image popup -->
+    <script>
+
+        document.querySelectorAll('img').forEach(image => {  //image-conatiner la img ah selete pannuthu
+            image.onclick = () => {
+                document.querySelector('.popup-image').style.display = 'block';
+                document.querySelector('.popup-image img').src = image.getAttribute('src');
+            }
+        });
+        document.querySelector('.popup-image span').onclick = () => {
+            document.querySelector('.popup-image').style.display = 'none';
+        }
+    </script>
+
+    <!-- script for video popup  -->
+    <script>
+        document.querySelectorAll('video').forEach(vid => {
+            vid.onclick = () => {
+                document.querySelector('.popup-video').style.display = 'block';
+                document.querySelector('.popup-video video').src = vid.getAttribute('src');
+            }
+
+        });
+
+        document.querySelector('.popup-video span').onclick = () => {
+            document.querySelector('.popup-video').style.display = 'none';
+
+        }
+    </script>
+</body>
+
+</html>
